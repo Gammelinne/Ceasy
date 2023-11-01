@@ -121,6 +121,8 @@ export const useAuthStore = defineStore({
         this.handleAuthSuccess('', {})
       } catch (error) {
         this.handleAuthError(error)
+      } finally {
+        router.push('/login')
       }
     },
 
@@ -133,7 +135,7 @@ export const useAuthStore = defineStore({
         this.user = response.data
         this.loading = false
       } catch (error) {
-        //router.push('/login')
+        router.push('/login')
         this.handleAuthError(error)
       }
     },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DrawerSetting from './atoms/navbar/DrawerSetting.vue'
-import DrawerFooter from './atoms/navbar/DrawerFooter.vue'
+import DrawerFooter from '@/components/atoms/navbar/DrawerFooter.vue'
 import ThemeToggleButton from '@/components/atoms/navbar/ThemeToggleButton.vue'
 import LanguageSelector from '@/components/atoms/navbar/LanguageSelector.vue'
 import { authStore } from '@/pinia-provider'
@@ -29,7 +29,7 @@ const toggleDrawer = () => {
     v-model="drawer"
     location="right"
     temporary
-    width="175"
+    width="200"
   >
     <DrawerSetting />
     <template v-slot:append>

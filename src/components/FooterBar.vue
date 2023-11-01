@@ -8,5 +8,4 @@ const appName = import.meta.env.VITE_APP_NAME
       {{ appName }} {{ new Date().getFullYear() }} - {{ $t('footer.message') }}
     </div>
   </VFooter>
-  bob
 </template>
