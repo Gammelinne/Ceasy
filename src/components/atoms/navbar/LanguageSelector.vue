@@ -10,7 +10,7 @@ const setLocale = (locale: string) => {
 <template>
   <VMenu offset-y>
     <template v-slot:activator="{ props }">
-      <VBtn v-if="authStore.isLoggedIn" rounded="0" elevation="0" size="large" block v-bind="props">
+      <VBtn v-if="authStore.isLoggedIn" block v-bind="props">
         <VIcon>mdi-translate</VIcon> &nbsp;{{ $t('setting.language') }}
       </VBtn>
       <VBtn v-else icon="mdi-translate" aria-label="Language" v-bind="props" />

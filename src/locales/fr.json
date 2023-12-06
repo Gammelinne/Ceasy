@@ -15,9 +15,9 @@
     "password": {
       "title": "Changer de mot de passe",
       "success": "Mot de passe changé",
-      "btn":{
+      "btn": {
         "resetPassword": "Change ton mot de passe",
-        "resetPasswordMail" : "Envoyer mail"
+        "resetPasswordMail": "Envoyer mail"
       }
     }
   },
@@ -33,7 +33,10 @@
     "passwordMatch": "Les mots de passe doivent être identiques",
     "passwordUpperCase": "Le mot de passe doit contenir au moins une majuscule",
     "passwordNumber": "Le mot de passe doit contenir au moins un chiffre",
-    "passwordSpecialChar": "Le mot de passe doit contenir au moins un caractère spécial"
+    "passwordSpecialChar": "Le mot de passe doit contenir au moins un caractère spécial",
+    "emailConfirmation": "Nous vous avons envoyé un mail, veuillez regardez vos nouveau courriels",
+    "or": "Ou",
+    "resendEmail": "Renvoyer email"
   },
   "footer": {
     "message": "Un projet open source par RENAULT Kylian"
@@ -46,6 +49,14 @@
   "404": {
     "title": "Erreur 404",
     "score": "Votre score",
-    "button" : "Accueil"
+    "button": "Accueil"
+  },
+  "drawer": {
+    "account": "Mon compte",
+    "favories": "Favories",
+    "commands": "Commandes"
+  },
+  "logout": {
+    "title": "Se déconnecter"
   }
 }

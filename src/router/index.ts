@@ -7,12 +7,14 @@ const router = createRouter({
     {
       name: 'Login',
       path: '/login',
-      component: () => import('@/views/LoginView.vue')
+      component: () => import('@/views/LoginView.vue'),
+      meta: { requiresAuth: false }
     },
     {
       name: 'Register',
       path: '/register',
-      component: () => import('@/views/RegisterView.vue')
+      component: () => import('@/views/RegisterView.vue'),
+      meta: { requiresAuth: false }
     },
     {
       name: 'Home',
@@ -21,9 +23,26 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      name: 'profile',
+      path: '/profile',
+      component: () => import('@/views/ProfileView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      name: 'verify-email',
+      path: '/verify-email/:email',
+      component: () => import('@/views/VerifyemailView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
       name: 'reset-password',
       path: '/reset-password',
-      component: () => import('@/views/ForgotPasswordView.vue')
+      component: () => import('@/views/ResetpasswordView.vue')
+    },
+    {
+      name: 'settings',
+      path: '/settings',
+      component: () => import('@/views/SettingView.vue')
     },
     /* {
       name: 'policies',
@@ -41,18 +60,20 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if (authStore.isLoggedIn) {
+  if (localStorage.getItem('token')) {
     if (to.name === 'Login' || to.name === 'Register') {
-      authStore.logout()
-      next()
-    }
-  }
-  if (to.meta.requiresAuth) {
-    if (authStore.isLoggedIn) {
-      next()
+      next('/')
+    } else if (to.meta.requiresAuth) {
+      if (authStore.isLoggedIn) {
+        next()
+      } else {
+        next('/login')
+      }
     } else {
-      next('/login')
+      next()
     }
+  } else if (to.meta.requiresAuth) {
+    next('/login')
   } else {
     next()
   }

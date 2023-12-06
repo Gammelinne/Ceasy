@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { authStore } from '@/pinia-provider'
+import { getCurrentInstance } from 'vue'
+const instance = getCurrentInstance()?.appContext.config.globalProperties
 </script>
 
 <template>
@@ -7,10 +9,11 @@ import { authStore } from '@/pinia-provider'
     <VListItemTitle class="my-1" align="center">
       {{ authStore.user.firstName }} {{ authStore.user.lastName }}
     </VListItemTitle>
-    <VListItemSubtitle class="my-1" align="center">
+    <VListItemSubtitle>
       <VBtn
         rounded="0"
-        :to="authStore.user.id"
+        size="small"
+        @click="instance?.$router.push('profile')"
         block
         elevation="0"
         prepend-icon="mdi-account-outline"
@@ -19,7 +22,7 @@ import { authStore } from '@/pinia-provider'
     </VListItemSubtitle>
     <VDivider />
     <VBtn
-      to="/favorites"
+      @click="instance?.$router.push('/favorites')"
       size="large"
       rounded="0"
       block
@@ -28,7 +31,7 @@ import { authStore } from '@/pinia-provider'
       >{{ $t('drawer.favories') }}</VBtn
     >
     <VBtn
-      to="/commands"
+      @click="instance?.$router.push('/commands')"
       size="large"
       rounded="0"
       block
@@ -36,7 +39,7 @@ import { authStore } from '@/pinia-provider'
       prepend-icon="mdi-food-outline"
       >{{ $t('drawer.commands') }}</VBtn
     >
-    <VBtn to="/settings" size="large" block elevation="0" prepend-icon="mdi-cog-outline">{{
+    <VBtn @click="instance?.$router.push('/settings')" size="large" block elevation="0" prepend-icon="mdi-cog-outline">{{
       $t('setting.title')
     }}</VBtn>
   </VList>

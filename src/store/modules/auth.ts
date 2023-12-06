@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia'
-import { type AxiosResponse } from 'axios'
 import axios from '@/axios'
 import router from '@/router'
-
+import { toast } from 'vue3-toastify'
+import i18n from '@/i18n'
 export interface AuthUser {
   token: string | null
   user: {
-    id?: string
     avatar?: string
     email?: string
     username?: string
     firstName?: string
     lastName?: string
+    emailVerifiedAt?: string
   }
   loading: boolean
   error: any
@@ -43,23 +43,23 @@ export const useAuthStore = defineStore({
       recpatchaToken: string
     }): Promise<void> {
       try {
-        this.error = null
+        this.clearError()
         this.loading = true
         localStorage.removeItem('token')
-        const response: AxiosResponse<{
-          token: { token: string; type: string }
-          user: { id?: string; avatar?: string; email?: string }
-        }> = await axios.post('/login', {
-          recpatchaToken,
-          email,
-          password
-        })
-        const { token, user: loggedInUser } = response.data
+
+        const { data } = await axios.post('/login', { recpatchaToken, email, password })
+
+        const { token, user: loggedInUser } = data
         this.handleAuthSuccess(token.token, loggedInUser)
+        this.fetchUser()
+        await router.push('/')
       } catch (error) {
-        this.handleAuthError(error)
-        router.push('/login')
-        localStorage.removeItem('token')
+        await this.handleAuthError(error)
+        if (this.error.message === 'Email not verified') {
+          await router.push('/verify-email/' + email)
+        }
+      } finally {
+        this.loading = false
       }
     },
 
@@ -77,7 +77,7 @@ export const useAuthStore = defineStore({
             recpatchaToken
           })
           .then((response) => {
-            this.user.id = response.data.userId
+            this.user.email = response.data.email
           })
         this.loading = false
         return true
@@ -104,6 +104,8 @@ export const useAuthStore = defineStore({
           .then((response) => {
             const { token, user: loggedInUser } = response.data
             this.handleAuthSuccess(token.token, loggedInUser)
+            this.fetchUser()
+            router.push('/')
           })
         this.loading = false
       } catch (error: any) {
@@ -113,15 +115,15 @@ export const useAuthStore = defineStore({
 
     async logout(): Promise<void> {
       try {
-        this.error = null
+        this.clearError()
         this.loading = true
         await axios.post('/logout')
         localStorage.removeItem('token')
         delete axios.defaults.headers.common['Authorization']
         this.handleAuthSuccess('', {})
-      } catch (error) {
-        this.handleAuthError(error)
+        this.$patch({ token: null })
       } finally {
+        this.loading = false
         router.push('/login')
       }
     },
@@ -140,36 +142,55 @@ export const useAuthStore = defineStore({
       }
     },
 
-    async updateUser(updatedInfo: { email?: string; password?: string }): Promise<void> {
+    async updateUser(avatar?: any, email?: string, password?: string): Promise<void> {
       try {
         this.error = null
         this.loading = true
         if (!this.isLoggedIn) return Promise.reject(new Error('User not logged in'))
-        const response: AxiosResponse<{ user: { id?: string; avatar?: string; email?: string } }> =
-          await axios.put('/user', updatedInfo)
-        const updatedUser = response.data.user
-        this.user = { ...this.user, ...updatedUser }
+        if (avatar) {
+          const formData = new FormData()
+          formData.append('avatar', avatar[0])
+          await axios.put('/users/update', formData).then((response) => {
+            this.user = { ...this.user, ...response.data.user }
+          })
+          toast(i18n.global.t('form.SuccessUpdate'), {
+            type: 'success'
+          })
+        } else {
+          await axios
+            .put('/users/update', {
+              email: email,
+              password: password
+            })
+            .then((response) => {
+              this.user = { ...this.user, ...response.data.user }
+            })
+        }
         this.loading = false
       } catch (error) {
         this.handleAuthError(error)
       }
     },
-
-    async sendResetPasswordEmail(email: string): Promise<void> {
-      try {
-        this.error = null
-        this.loading = true
-        localStorage.removeItem('token')
-        delete axios.defaults.headers.common['Authorization']
-        await axios.post('/reset-password-email', {
+    async sendResetPasswordEmail(email: string): Promise<any> {
+      this.error = null
+      this.loading = true
+      localStorage.removeItem('token')
+      delete axios.defaults.headers.common['Authorization']
+      await axios
+        .post('/reset-password-email', {
           email
         })
-      } catch (error) {
-        this.handleAuthError(error)
-      } finally {
-        this.loading = false
-      }
+        .then(() => {
+          toast(i18n.global.t('form.sendEmail'), {
+            type: 'success'
+          })
+        })
+        .catch((error) => {
+          this.handleAuthError(error)
+        })
+      this.loading = false
     },
+
     async resetPassword(
       password: String,
       password_confirmation: String,
@@ -223,7 +244,7 @@ export const useAuthStore = defineStore({
       this.error = null
     },
 
-    handleAuthError(error: any): void {
+    async handleAuthError(error: any): Promise<void> {
       this.error = error.response.data
       localStorage.removeItem('token')
       this.loading = false

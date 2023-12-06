@@ -3,5 +3,6 @@
 <script setup lang="ts">
 import { onBeforeMount, getCurrentInstance } from 'vue'
 const instance = getCurrentInstance()?.appContext.config.globalProperties
-onBeforeMount(() => {})
 </script>
+
+<!-- https://dev.vuetifyjs.com/en/components/infinite-scroller/ -->

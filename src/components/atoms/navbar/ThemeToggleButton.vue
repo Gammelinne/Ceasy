@@ -7,15 +7,7 @@ const toggleTheme = () => {
 </script>
 
 <template>
-  <VBtn
-    v-if="authStore.isLoggedIn"
-    rounded="0"
-    elevation="0"
-    block
-    size="large"
-    aria-label="theme"
-    @click="toggleTheme"
-  >
+  <VBtn v-if="authStore.isLoggedIn" block aria-label="theme" @click="toggleTheme">
     <VIcon>{{ themeStore.isLight ? 'mdi-white-balance-sunny' : 'mdi-moon-waxing-crescent' }} </VIcon
     >&nbsp; {{ $t('setting.theme') }}
   </VBtn>
