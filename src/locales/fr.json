@@ -58,5 +58,9 @@
   },
   "logout": {
     "title": "Se déconnecter"
+  },
+  "profile" :{
+    "editAvatar" : "Changer votre photo de profile",
+    "successUpdate": "Photos de profile modifié"
   }
 }

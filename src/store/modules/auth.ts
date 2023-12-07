@@ -153,7 +153,7 @@ export const useAuthStore = defineStore({
           await axios.put('/users/update', formData).then((response) => {
             this.user = { ...this.user, ...response.data.user }
           })
-          toast(i18n.global.t('form.SuccessUpdate'), {
+          toast(i18n.global.t('profile.successUpdate'), {
             type: 'success'
           })
         } else {
